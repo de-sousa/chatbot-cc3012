@@ -15,18 +15,18 @@ read_line(Words) :-
 % pair and then connect the
 % Y-coordinate to the Output
 bot(Input) :-
-    connect(X,Map,Input),
     find(X,Y),
+    connect(X,Map,Input),
     connect(Y,Map,Output),
     write(Output).
  
 % connect/3 ----------
-connect([X|Words1],Map,[Y|Words2]) :-
+connect([X|Words1],Map,List) :-
     integer(X),
     search(X,Map,Y),
+    append(Y,Words2,List),
     connect(Words1,Map,Words2). 
 connect([Word|Words1],Map,[Word|Words2]) :-
-    atom(Word),
     connect(Words1,Map,Words2).
 connect([],_,[]).
 
@@ -37,5 +37,5 @@ search(X,[(X1,_)|Map],Y) :-
     search(X,Map,Y).
 
 % (X,Y) -------------
-find([hello, 1],[hello, for, you, "too,", 1]).
+find(["hello", 1],["hello", "for", "you", "too,", 1]).
     
