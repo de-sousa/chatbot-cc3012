@@ -6,7 +6,9 @@ answers(Words,List):-
     attribution(Phrase,Sentences,List),!.
 
 % --------------------------------------------------------
-% attrinution(Words,ListaTuplos,
+% attribution(Words,Database,PossibleAnswers) => attribution analisa a
+% Base de Dados e as PossibleAnswers contêm o tuplo ans(Frase,Ratio),
+% em que Ratio (>0) corresponde à pontuação atribuída à Frase
 attribution(_,[],[]).
 attribution(Words,[(Ph,Ans)|S],[ans(Ans1,Score)|List]):-
     split_string(Ph," "," ",Ph1),
