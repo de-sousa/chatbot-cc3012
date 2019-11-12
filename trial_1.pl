@@ -47,22 +47,21 @@ sentences(
      ("are how you","i'm fine")
     ]).
 
-% -------------------------------------
-quick_sort(L,SL) :- quicksort_dl(L,SL-[]).
+quick_sort([],[]).
+quick_sort([X|Xs],S) :-
+    compareList(>,X,Xs,A),
+    compareList(<,X,Xs,B),
+    quick_sort(A,Y),
+    quick_sort(B,Z),
+    append(Y,[X|Z],S).
 
-quick_sort_dl([],L-L).
-quick_sort_dl([A|R],SL-RSL) :-
-  partition(A,R,L1,L2),
-  quicksort_dl(L1,SL-[A|R2]),
-  quicksort_dl(L2,R2-RSL).
-
-partition(A,[],[],[]).
-partition(A,[X|L1],[X|R1],R2) :-
-  X=<A,partition(A,L1,R1,R2), !.
-partition(A,[X|L1],R1,[X|R2]) :-
-  X>A,partition(A,L1,R1,R2), !.
-
-%-------------------------------------
+compareList(_,_,[],[]).
+compareList(C,X,[Y|Ys],[Y|S]):-
+    compare(C,X,Y),
+    compareList(C,X,Ys,S).
+compareList(C,X,[Y|Ys],S):-
+    not(compare(C,X,Y)),
+    compareList(C,X,Ys,S).
 
 best_answer([ans(Str,_)],Str).
 best_answer(List,S):-
