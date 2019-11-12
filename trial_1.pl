@@ -42,7 +42,8 @@ number([W|Words],[Ph|Phrase],S):-
     S is X,!.	 
 
 sentences(
-    [("hello hi salut","hello dear bot"),
+    [("hello hi salut","hello user"),
+     ("dear hello hi","how nice! hello beautiful user!"),
      ("are how you","i'm fucking hating prolog")
     ]).
 
@@ -62,4 +63,21 @@ compare_list(C,X,[Y|Ys],S):-
     not(compare(C,X,Y)),
     compare_list(C,X,Ys,S),!.
  
- 
+best_answer([ans(Str,_)],Str).
+best_answer(List,S):-
+    best_answer_add(List,S,_).
+    
+best_answer_add([ans(Str,Sco)],Str,Sco).
+best_answer_add([ans(Str,Sco)|Ans],Str,Sco):-
+    best_answer_add(Ans,_,X),
+    Sco>X,!.
+best_answer_add([ans(_,Sco)|Ans],S,X):-
+    best_answer_add(Ans,S,X),
+    not(Sco>X),!.
+
+runifanswer(Sen,Ans):-
+    answers(Sen,List),
+    length(List,X),
+    S is X-1,
+    random_between(0,S,R),
+    nth0(R,List,ans(Ans,_)).
