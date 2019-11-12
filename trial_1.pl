@@ -1,5 +1,9 @@
 % --------------------------------------------------------
 % answers(Words,List) => Words
+answers(Words,[ans(["I'm","sorry,","can","you","repeat?"],1)]):-
+    quick_sort(Words,Phrase),
+    sentences(Sentences),
+    attribution(Phrase,Sentences,[]),!.
 answers(Words,List):-
     quick_sort(Words,Phrase),
     sentences(Sentences),
@@ -56,15 +60,6 @@ number([W|Words],[Ph|Phrase],S):-
     S is X,!.
 
 % --------------------------------------------------------
-% --------------------Base de Dados-----------------------
-sentences(
-    [("hello hi salut","hello user"),
-     ("dear hello hi","how nice! hello beautiful user!"),
-     ("are how you","i'm fine")
-    ]).
-
-
-% --------------------------------------------------------
 % quicksort(L1,L2) => Simple sorting, por ordem crescente.
 % Elementos iguais, são removidos, ficando só um representante.
 quick_sort([],[]).
@@ -82,8 +77,6 @@ compareList(C,X,[Y|Ys],[Y|S]):-
 compareList(C,X,[Y|Ys],S):-
     not(compare(C,X,Y)),
     compareList(C,X,Ys,S).
-
-
 
 best_answer([ans(Str,_)],Str).
 best_answer(List,S):-
@@ -121,3 +114,32 @@ select_score(Y,[ans(_,Sco)|List],Ans):-
     select_score(X,List,Ans),!.
 select_score(Y,[ans(Sen,Sco)|_],Sen):-
     Sco>Y,!.
+
+bot :- read_line(Input), bot(Input).
+
+read_line(Words) :-
+    current_input(Input),
+    read_string(Input,"\n"," .,!?",_,String),
+    split_string(String," "," ",Words).
+
+bot(Input):-
+    rpropanswer(Input,Output),
+    write_list(Output),!,
+    bot.
+
+write_list([X]):-
+    write(X),
+    write("\n"),!.
+write_list([X|Xs]):-
+    write(X),
+    write(" "),
+    write_list(Xs).
+
+% --------------------------------------------------------
+% --------------------Base de Dados-----------------------
+sentences(
+    [("hello hi salut","hello user"),
+     ("dear hello hi","how nice! hello beautiful user!"),
+     ("are how you","i'm fine"),
+     ("bye","Are you sure you want to leave?")
+    ]).
