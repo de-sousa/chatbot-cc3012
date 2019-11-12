@@ -44,7 +44,7 @@ number([W|Words],[Ph|Phrase],S):-
 sentences(
     [("hello hi salut","hello user"),
      ("dear hello hi","how nice! hello beautiful user!"),
-     ("are how you","i'm fucking hating prolog")
+     ("are how you","i'm fine")
     ]).
 
 quick_sort([],[]).
@@ -81,3 +81,21 @@ runifanswer(Sen,Ans):-
     S is X-1,
     random_between(0,S,R),
     nth0(R,List,ans(Ans,_)).
+
+rpropanswer(Sen,Ans):-
+    answers(Sen,List),
+    sum_score(List,X),
+    random(0,X,Y),
+    select_score(Y,List,Ans).
+
+sum_score([],0).
+sum_score([ans(_,Score)|Ls],X):-
+    sum_score(Ls,Y),
+    X is Score+Y.
+
+select_score(Y,[ans(_,Sco)|List],Ans):-
+    Y>Sco,
+    X is Y-Sco,
+    select_score(X,List,Ans),!.
+select_score(Y,[ans(Sen,Sco)|_],Sen):-
+    Sco>Y,!.
