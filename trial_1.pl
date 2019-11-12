@@ -35,38 +35,39 @@ number([W|Words],[Ph|Phrase],S):-
 number([W|Words],[Ph|Phrase],S):-
     compare(<,W,Ph),
     number(Words,[Ph|Phrase],X),
-    S is X,!.	 
+    S is X,!.
 number([W|Words],[Ph|Phrase],S):-
     compare(>,W,Ph),
     number([W|Words],Phrase,X),
-    S is X,!.	 
+    S is X,!.
 
 sentences(
     [("hello hi salut","hello user"),
      ("dear hello hi","how nice! hello beautiful user!"),
-     ("are how you","i'm fucking hating prolog")
+     ("are how you","i'm fine")
     ]).
 
-quick_sort([],[]).
-quick_sort([X|Xs],S) :-
-    compare_list(>,X,Xs,A),
-    compare_list(<,X,Xs,B),
-    quick_sort(A,Y),
-    quick_sort(B,Z),
-    append(Y,[X|Z],S),!.
+% -------------------------------------
+quick_sort(L,SL) :- quicksort_dl(L,SL-[]).
 
-compare_list(_,_,[],[]).
-compare_list(C,X,[Y|Ys],[Y|S]):-
-    compare(C,X,Y),
-    compare_list(C,X,Ys,S),!.
-compare_list(C,X,[Y|Ys],S):-
-    not(compare(C,X,Y)),
-    compare_list(C,X,Ys,S),!.
- 
+quick_sort_dl([],L-L).
+quick_sort_dl([A|R],SL-RSL) :-
+  partition(A,R,L1,L2),
+  quicksort_dl(L1,SL-[A|R2]),
+  quicksort_dl(L2,R2-RSL).
+
+partition(A,[],[],[]).
+partition(A,[X|L1],[X|R1],R2) :-
+  X=<A,partition(A,L1,R1,R2), !.
+partition(A,[X|L1],R1,[X|R2]) :-
+  X>A,partition(A,L1,R1,R2), !.
+
+%-------------------------------------
+
 best_answer([ans(Str,_)],Str).
 best_answer(List,S):-
     best_answer_add(List,S,_).
-    
+
 best_answer_add([ans(Str,Sco)],Str,Sco).
 best_answer_add([ans(Str,Sco)|Ans],Str,Sco):-
     best_answer_add(Ans,_,X),
