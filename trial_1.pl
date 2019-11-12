@@ -4,11 +4,18 @@ answers(Words,List):-
     attribution(Phrase,Sentences,List),!.
 
 attribution(_,[],[]).
-attribution(Words,[Ph|S],[ans(Ph,Score)|List]):-
-    ratio(Words,Ph,Score),
+attribution(Words,[(Ph,Ans)|S],[ans(Ans1,Score)|List]):-
+    split_string(Ph," "," ",Ph1),
+    ratio(Words,Ph1,Score),
+    Score>0,
+    split_string(Ans," "," ",Ans1),
+    attribution(Words,S,List),!.
+attribution(Words,[(Ph,_)|S],List):-
+    split_string(Ph," "," ",Ph1),
+    ratio(Words,Ph1,Score),
+    Score=0,
     attribution(Words,S,List),!.
 
-%-------------------------------------
 ratio(Words,Phrase,Score):-
     number(Phrase,X),
     number(Words,Phrase,Y),
@@ -33,9 +40,12 @@ number([W|Words],[Ph|Phrase],S):-
     compare(>,W,Ph),
     number([W|Words],Phrase,X),
     S is X,!.	 
-        
-%-------------------------------------    
-    
+
+sentences(
+    [("hello hi salut","hello dear bot"),
+     ("are how you","i'm fucking hating prolog")
+    ]).
+
 quick_sort([],[]).
 quick_sort([X|Xs],S) :-
     compare_list(>,X,Xs,A),
