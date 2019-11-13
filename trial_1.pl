@@ -115,18 +115,45 @@ select_score(Y,[ans(_,Sco)|List],Ans):-
 select_score(Y,[ans(Sen,Sco)|_],Sen):-
     Sco>Y,!.
 
-bot :- read_line(Input), bot(Input).
-
 read_line(Words) :-
     current_input(Input),
     read_string(Input,"\n"," .,!?",_,String),
     split_string(String," "," ",Words).
 
-bot(Input):-
-    rpropanswer(Input,Output),
-    write_list(Output),!,
-    bot.
+chat :- read_line(Input), chat(Input),!.
 
+chat(Input):-
+    rpropanswer(Input,S),
+    split_string("Are you sure you want to leave?"," "," ",S),!,
+    write_list(S),
+    chat_exit.
+chat(Input):-
+    rpropanswer(Input,Output),
+    split_string("Are you sure you want to leave?"," "," ",S),
+    not(compare(=,Output,S)),
+    write_list(Output),
+    chat. 
+
+chat_exit :- read_line(Input), chat_exit(Input),!.
+
+chat_exit(Input):-
+    ex_ans(Input,[ans(S,_)]),
+    split_string("bye! hope to see you soon!"," "," ",S),
+    write_list(S),!.
+chat_exit(Input):-
+    ex_ans(Input,[ans(S,_)]),
+    split_string("thank you! in what can i help you?"," "," ",S),
+    write_list(S),!,
+    chat.
+chat_exit(_):-
+    write("I'm sorry, can you repeat?"),!,
+    chat_exit.
+
+ex_ans(Words,List):-
+    quick_sort(Words,Phrase),
+    ex_sentences(Sentences),
+    attribution(Phrase,Sentences,List),!.
+    
 write_list([X]):-
     write(X),
     write("\n"),!.
@@ -142,4 +169,9 @@ sentences(
      ("dear hello hi","how nice! hello beautiful user!"),
      ("are how you","i'm fine"),
      ("bye","Are you sure you want to leave?")
+    ]).
+
+ex_sentences(
+    [("s sim y yes","bye! hope to see you soon!"),
+     ("n não nein no","thank you! in what can i help you?")
     ]).
