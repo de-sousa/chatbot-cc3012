@@ -175,3 +175,20 @@ ex_sentences(
     [("s sim y yes","bye! hope to see you soon!"),
      ("n não nein no","thank you! in what can i help you?")
     ]).
+
+
+% --------------------------------------------------------
+% stats/1 => Takes a list with a conversation and prints out stats from that convers.
+stats(Xss) :-
+    statsAux(Xss,Length),
+    write("Length of the conversation: "),
+    write(Length),
+    write(".\n").
+
+statsAux([],Length) :-
+    Length is 0.
+   
+statsAux([_|Xss],Length) :-
+    statsAux(Xss,M),
+    Length is M+1.
+    
