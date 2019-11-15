@@ -184,9 +184,10 @@ chat(X,Last) :-
 
 % --------------------------------------------------------
 % chat/3 : chat(Input,L1,L2)
-% - Caso o utilizador queira terminar a conversa, analisando
-% o Input, atualizará L1 com o Output correspondente e
-% direcionará o programa para chat_exit/2
+% - Analisando o Input, chat/3 atualizará L1 com o Output
+% correspondente. L2 contém toda a conversa e eventualmente
+% unificará com L1. Caso o utilizador queira terminar a
+% conversa, direcionará o programa para chat_exit/2.
 chat(Input,X,Last):-
     rpropanswer(Input,S),
     split_string("Are you sure you want to leave?"," "," ",S),
@@ -196,12 +197,6 @@ chat(Input,X,Last):-
     append(Xs,Ss,Ys),
     string_chars(Y,Ys),
     chat_exit(Y,Last).
-
-% --------------------------------------------------------
-% chat/3 : chat(Input,L1,L2)
-% - Avalia o Input, escolhendo o melhor Output, que será
-% adicionado a X. L2 contém a string correspondente a toda
-% a conversa
 chat(Input,X,Last):-
     rpropanswer(Input,Output),
     split_string("Are you sure you want to leave?"," "," ",S),
@@ -230,6 +225,12 @@ chat_exit(X,Last) :-
     split_string(In," "," ",InLs),
     chat_exit(InLs,Y,Last),!.
 
+% --------------------------------------------------------
+% chat_exit/3 : chat_exit(In,L1,L2)
+% - L2 contém toda a conversa. Caso o utilizador queira
+% de facto sair do programa, L1, com o último Output
+% adicionado, unifica com L2. Caso contrário tudo se mantém
+% e o programa é redirecionado para chat/2
 chat_exit(Input,X,Y):-
     ex_ans(Input,[ans(S,_)]),
     split_string("Bye!"," "," ",S),
@@ -255,11 +256,20 @@ chat_exit(_,X,Last):-
     string_chars(Y,Ys),
     chat_exit(X,Y,Last).
 
+% --------------------------------------------------------
+% ex_ans/2 : ex_ans(Words,List)
+% - Igual a answers/2, a única diferença é que ex_ans/1 é
+% um facto que apenas contém as respostas possíveis de
+% saída.
 ex_ans(Words,List):-
     quick_sort(Words,Phrase),
     ex_sentences(Sentences),
     attribution(Phrase,Sentences,List),!.
-    
+
+% --------------------------------------------------------
+% write_list/1 :
+% - Escreve cada elemento do seu argumento no output
+% padrão, com um ' ' entre eles e terminando com um '\n'
 write_list([X]):-
     write(X),
     write("\n"),!.
@@ -268,6 +278,10 @@ write_list([X|Xs]):-
     write(" "),
     write_list(Xs).
 
+% --------------------------------------------------------
+% wordls_to_chls/2 : wordls_to_chls(W,L)
+% - L é a lista dos caracteres de W por ordem, sendo W uma
+% lista de palavras
 wordls_to_chls([],['\n']).
 wordls_to_chls([X|Xs],CharLs):-
     string_chars(X,Ls1),
