@@ -119,67 +119,78 @@ read_line(Words) :-
     current_input(Input),
     read_string(Input,"\n"," .,!?",_,Words).
 
-
 chat(X) :-
+    chat("",X).
+
+chat(X,Last) :-
     read_line(Input),
     string_lower(Input,In),
     string_chars(Input,Is),
     string_chars(X,Xs),
-    append(Xs,Is,Ys),
+    append(Is,['\n'],I1s),
+    append(Xs,I1s,Ys),
     string_chars(Y,Ys),
     split_string(In," "," ",InLs),
-    chat(InLs,Y),!.
+    chat(InLs,Y,Last),!.
 
-chat(Input,X):-
+chat(Input,X,Last):-
     rpropanswer(Input,S),
-    split_string("Are you sure you want to leave?\n"," "," ",S),
-    write_list("Are you sure you want to leave?\n"),
+    split_string("Are you sure you want to leave?"," "," ",S),
+    write("Are you sure you want to leave?\n"),
     string_chars("Are you sure you want to leave?\n",Ss),
     string_chars(X,Xs),
     append(Xs,Ss,Ys),
     string_chars(Y,Ys),
-    chat_exit(Y).
+    chat_exit(Y,Last).
 
-chat(Input,X):-
+chat(Input,X,Last):-
     rpropanswer(Input,Output),
+
     split_string("Are you sure you want to leave?"," "," ",S),
     not(compare(=,Output,S)),
+
     write_list(Output),
     wordls_to_chls(Output,Os),
     string_chars(X,Xs),
     append(Xs,Os,Ys),
     string_chars(Y,Ys),
-    chat(Y). 
+    chat(Y,Last). 
 
-chat_exit(X) :-
+chat_exit(X,Last) :-
     read_line(Input),
     string_lower(Input,In),
     string_chars(Input,Is),
     string_chars(X,Xs),
-    append(Xs,Is,Ys),
+    append(Is,['\n'],I1s),
+    append(Xs,I1s,Ys),
     string_chars(Y,Ys),
     split_string(In," "," ",InLs),
-    chat_exit(InLs,Y),!.
+    chat_exit(InLs,Y,Last),!.
 
-chat_exit(Input,_):-
+chat_exit(Input,X,Y):-
     ex_ans(Input,[ans(S,_)]),
-    split_string("Bye!"," "," ",S),!.
-chat_exit(Input,X):-
+    split_string("Bye!"," "," ",S),
+    write("Bye!\n"),
+    string_chars("Bye!",Is),
+    string_chars(X,Xs),
+    append(Xs,Is,Ys),
+    string_chars(Y,Ys),!.
+chat_exit(Input,X,Last):-
     ex_ans(Input,[ans(S,_)]),
-    split_string("thank you! in what can i help you?"," "," ",S),
-    string_chars(Input,Is),
+    split_string("Thank you! In what can i help you?"," "," ",S),
+    string_chars("Thank you! In what can i help you?",Is),
     string_chars(X,Xs),
     append(Xs,Is,Ys),
     string_chars(Y,Ys),  
     write_list(S),!,
-    chat(Y).
-chat_exit(_,X):-
+    chat(Y,Last).
+chat_exit(_,X,Last):-
     write("I'm sorry, can you repeat?"),!,
     string_chars("I'm sorry, can you repeat?",Is),
     string_chars(X,Xs),
     append(Xs,Is,Ys),
     string_chars(Y,Ys),
-    chat_exit(X,Y).
+    chat_exit(X,Y,Last).
 
 ex_ans(Words,List):-
     quick_sort(Words,Phrase),
@@ -194,11 +205,11 @@ write_list([X|Xs]):-
     write(" "),
     write_list(Xs).
 
-wordls_to_chls([],"\n").
+wordls_to_chls([],['\n']).
 wordls_to_chls([X|Xs],CharLs):-
     string_chars(X,Ls1),
     wordls_to_chls(Xs,CharLs1),
-    append(Ls1,[" "],Ls),
+    append(Ls1,[' '],Ls),
     append(Ls,CharLs1,CharLs).
 
 % --------------------------------------------------------
@@ -212,7 +223,7 @@ sentences(
 
 ex_sentences(
     [("s sim y yes","Bye!"),
-     ("n não nein no","thank you! in what can i help you?")
+     ("n não nein no","Thank you! In what can i help you?")
     ]).
 
 
@@ -234,7 +245,10 @@ stats(X) :-
     write_ls(Ls,NWords),!.
 
 stats_words([],0).
+stats_words([""|Xs],M):-
+    stats_words(Xs,M).
 stats_words([X|Xs], N) :-
+    not(X=""),
     stats_words(Xs,M),
     split_string(X," ",",.!?",Y),
     length(Y,L),
@@ -266,4 +280,4 @@ write_ls([(L1,L2)|Ls],NWords) :-
     F is L2/NWords,
     write(F),
     write("%\n"),!,
-    write_ls(Ls,NWords).
+write_ls(Ls,NWords).
