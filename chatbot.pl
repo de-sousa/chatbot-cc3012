@@ -291,11 +291,21 @@ wordls_to_chls([X|Xs],CharLs):-
 
 % --------------------------------------------------------
 % --------------------Base de Dados-----------------------
-sentences(
-    [("hello hi salut","hello user"),
-     ("dear hello hi","how nice! hello beautiful user!"),
-     ("are how you","i'm fine"),
-     ("bye","Are you sure you want to leave?")
+sentences([
+     %-basics
+     ("hello hi salut","Hello, user!"),
+     ("are good how ok you","I'm good, and you?"),
+     ("are good how ok you","It's everything fine! Thanks for asking! And with you?"),
+     ("answer life to","42!"),
+     ("bye","Are you sure you want to leave?"),
+     %----------------
+     
+     %-split_string
+   ("can help in me predicate split_string the with",
+     "split_string(+String,+SepChars,+PadChars,-SubString)\nBreak String into SubStrings.\nThe SepChars argument provides the characters that act as separators and thus the length of SubStrings is one more than the number of separators found if SepChars and PadChars do not have common characters. If SepChars and PadChars are equal, sequences of adjacent separators act as a single separator. Leading and trailing characters for each substring that appear in PadChars are removed from the substring. The input arguments can be either atoms, strings or char/code lists."),
+   ("string_split","I think you misspelled the predicate. Try split_string."),
+   ("example split_string", "split_string("a.b.c.d",".","",L).\nL = ["a","b","c","d"].")
+     %----------------
     ]).
 
 ex_sentences(
