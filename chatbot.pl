@@ -297,15 +297,28 @@ sentences([
      ("are good how ok you","I'm good, and you?"),
      ("are good how ok you","It's everything fine! Thanks for asking! And with you?"),
      ("answer life to","42!"),
-     ("bye","Are you sure you want to leave?"),
+     ("bye","Are you sure you want to leave?"), 
      %----------------
-     
-     %-split_string
-     ("predicate predicates split_string","split_string(+String,+SepChars,+PadChars,-SubString)\nBreak String into SubStrings.\nThe SepChars argument provides the characters that act as separators and thus the length of SubStrings is one more than the number of separators found if SepChars and PadChars do not have common characters. If SepChars and PadChars are equal, sequences of adjacent separators act as a single separator. Leading and trailing characters for each substring that appear in PadChars are removed from the substring. The input arguments can be either atoms, strings or char/code lists."),
-   ("string_split","I think you misspelled the predicate. Try split_string."),
-   ("example split_string", "split_string(\"a.b.c.d\",\".\",\"\",L).\nL = [\"a\",\"b\",\"c\",\"d\"].")
-     %----------------
-    ]).
+     ("split_string","split_string(+String,+SepChars,+PadChars,-SubString)\nBreak String into SubStrings.\nThe SepChars argument provides the characters that act as separators and thus the length of SubStrings is one more than the number of separators found if SepChars and PadChars do not have common characters. If SepChars and PadChars are equal, sequences of adjacent separators act as a single separator. Leading and trailing characters for each substring that appear in PadChars are removed from the substring. The input arguments can be either atoms, strings or char/code lists."),
+     ("string_split","I think you misspelled the predicate. Try split_string."),
+     ("is","X is Y % X is the value that results from simplifying the Y as an arithmetic expression. Attempts unification of variable X to the value of Y."),
+     ("=:=","X =:= Y % X and Y evaluate to the same arithmetic value. No unification."),
+     ("=","X = Y % Can X and Y be unified into the same value? If so, unify them."),
+     ("\\=","X \\= Y % Would unifying X and Y fail?"),
+     ("==","X == Y % Are X and Y already the same value?"),
+     ("\\==","X \\== Y % Are X and Y different?"),
+     ("isempty","isEmpty([])."),
+     ("singleton","singleton([X])."),
+     ("hastwo","hasTwo([X, Y])."),
+     ("atleasttwo","atLeastTwo([X, _])."),
+     ("last","last(Xs, LastX)."),
+     ("element","element(Index, Integers, Value). % Value is the Indexth element of Integers. Only works with 1-indexed and with integers"),
+     ("nth0","nth0(Index, Values, Value). % 0-indexed Values. Value is the Indexth element. See also nth1"),
+     ("length","length(Xs, Count)."),
+     ("reverse","reverse(Xs, Reversed)."),
+     ("append","append(Xs, Ys, XsThenYs)."),
+     ("flatten","flatten(Nested, Flat). % Remove all but outermost \"[\" and \"]\" from nested list")
+	     ]).
 
 ex_sentences(
     [("s sim y yes","Bye!"),
