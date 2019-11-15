@@ -301,8 +301,7 @@ sentences([
      %----------------
      
      %-split_string
-   ("can help in me predicate split_string the with",
-     "split_string(+String,+SepChars,+PadChars,-SubString)\nBreak String into SubStrings.\nThe SepChars argument provides the characters that act as separators and thus the length of SubStrings is one more than the number of separators found if SepChars and PadChars do not have common characters. If SepChars and PadChars are equal, sequences of adjacent separators act as a single separator. Leading and trailing characters for each substring that appear in PadChars are removed from the substring. The input arguments can be either atoms, strings or char/code lists."),
+     ("predicate predicates split_string","split_string(+String,+SepChars,+PadChars,-SubString)\nBreak String into SubStrings.\nThe SepChars argument provides the characters that act as separators and thus the length of SubStrings is one more than the number of separators found if SepChars and PadChars do not have common characters. If SepChars and PadChars are equal, sequences of adjacent separators act as a single separator. Leading and trailing characters for each substring that appear in PadChars are removed from the substring. The input arguments can be either atoms, strings or char/code lists."),
    ("string_split","I think you misspelled the predicate. Try split_string."),
    ("example split_string", "split_string(\"a.b.c.d\",\".\",\"\",L).\nL = [\"a\",\"b\",\"c\",\"d\"].")
      %----------------
