@@ -117,37 +117,69 @@ select_score(Y,[ans(Sen,Sco)|_],Sen):-
 
 read_line(Words) :-
     current_input(Input),
-    read_string(Input,"\n"," .,!?",_,String),
-    split_string(String," "," ",Words).
+    read_string(Input,"\n"," .,!?",_,Words).
 
-chat :- read_line(Input), chat(Input),!.
 
-chat(Input):-
+chat(X) :-
+    read_line(Input),
+    string_lower(Input,In),
+    string_chars(Input,Is),
+    string_chars(X,Xs),
+    append(Xs,Is,Ys),
+    string_chars(Y,Ys),
+    split_string(In," "," ",InLs),
+    chat(InLs,Y),!.
+
+chat(Input,X):-
     rpropanswer(Input,S),
-    split_string("Are you sure you want to leave?"," "," ",S),!,
-    write_list(S),
-    chat_exit.
-chat(Input):-
+    split_string("Are you sure you want to leave?\n"," "," ",S),
+    write_list("Are you sure you want to leave?\n"),
+    string_chars("Are you sure you want to leave?\n",Ss),
+    string_chars(X,Xs),
+    append(Xs,Ss,Ys),
+    string_chars(Y,Ys),
+    chat_exit(Y).
+
+chat(Input,X):-
     rpropanswer(Input,Output),
     split_string("Are you sure you want to leave?"," "," ",S),
     not(compare(=,Output,S)),
     write_list(Output),
-    chat. 
+    wordls_to_chls(Output,Os),
+    string_chars(X,Xs),
+    append(Xs,Os,Ys),
+    string_chars(Y,Ys),
+    chat(Y). 
 
-chat_exit :- read_line(Input), chat_exit(Input),!.
+chat_exit(X) :-
+    read_line(Input),
+    string_lower(Input,In),
+    string_chars(Input,Is),
+    string_chars(X,Xs),
+    append(Xs,Is,Ys),
+    string_chars(Y,Ys),
+    split_string(In," "," ",InLs),
+    chat_exit(InLs,Y),!.
 
-chat_exit(Input):-
+chat_exit(Input,_):-
     ex_ans(Input,[ans(S,_)]),
-    split_string("bye! hope to see you soon!"," "," ",S),
-    write_list(S),!.
-chat_exit(Input):-
+    split_string("Bye!"," "," ",S),!.
+chat_exit(Input,X):-
     ex_ans(Input,[ans(S,_)]),
     split_string("thank you! in what can i help you?"," "," ",S),
+    string_chars(Input,Is),
+    string_chars(X,Xs),
+    append(Xs,Is,Ys),
+    string_chars(Y,Ys),  
     write_list(S),!,
-    chat.
-chat_exit(_):-
+    chat(Y).
+chat_exit(_,X):-
     write("I'm sorry, can you repeat?"),!,
-    chat_exit.
+    string_chars("I'm sorry, can you repeat?",Is),
+    string_chars(X,Xs),
+    append(Xs,Is,Ys),
+    string_chars(Y,Ys),
+    chat_exit(X,Y).
 
 ex_ans(Words,List):-
     quick_sort(Words,Phrase),
@@ -162,6 +194,13 @@ write_list([X|Xs]):-
     write(" "),
     write_list(Xs).
 
+wordls_to_chls([],"\n").
+wordls_to_chls([X|Xs],CharLs):-
+    string_chars(X,Ls1),
+    wordls_to_chls(Xs,CharLs1),
+    append(Ls1,[" "],Ls),
+    append(Ls,CharLs1,CharLs).
+
 % --------------------------------------------------------
 % --------------------Base de Dados-----------------------
 sentences(
@@ -172,23 +211,59 @@ sentences(
     ]).
 
 ex_sentences(
-    [("s sim y yes","bye! hope to see you soon!"),
+    [("s sim y yes","Bye!"),
      ("n não nein no","thank you! in what can i help you?")
     ]).
 
 
 % --------------------------------------------------------
 % stats/1 => Takes a list with a conversation and prints out stats from that convers.
-stats(Xss) :-
-    statsAux(Xss,Length),
+stats(X) :-
+    string_lower(X,Xs),
+    split_string(Xs,"\n"," ",Xss),
+    length(Xss,Length),
     write("Length of the conversation: "),
     write(Length),
-    write(".\n").
+    write(".\n"),!,
+    stats_words(Xss,NWords),
+    write("Total number of words: "),
+    write(NWords),
+    write(".\n"),
+    stats_freq(Xss,Ls),
+    write("Word Frequency is:\n"),
+    write_ls(Ls,NWords),!.
 
-statsAux([],Length) :-
-    Length is 0.
-   
-statsAux([_|Xss],Length) :-
-    statsAux(Xss,M),
-    Length is M+1.
-    
+stats_words([],0).
+stats_words([X|Xs], N) :-
+    stats_words(Xs,M),
+    split_string(X," ",",.!?",Y),
+    length(Y,L),
+    N is L+M.
+
+stats_freq([],[]).
+stats_freq([X|Xss],Ls):-
+    stats_freq(Xss,Ms),
+    split_string(X," "," .,!?",Y),
+    stats_freq(Y,Ms,Ls).
+
+stats_freq([],Ms,Ms).
+stats_freq([X|Xs],Ms,Ls):-
+    stats_freq(Xs,Ms,Ns),
+    add(X,Ns,Ls).
+
+add(X,[],[(X,1)]).
+add(X,[(X,N)|Ms],[(X,M)|Ms]) :-
+    M is N+1,!.
+add(X,[(Y,N)|Ms],[(Y,N)|Ns]):-
+    not(X=Y),
+    add(X,Ms,Ns),!.
+
+write_ls([],_).
+write_ls([(L1,L2)|Ls],NWords) :-
+    write("- "),
+    write(L1),
+    write(": "),
+    F is L2/NWords,
+    write(F),
+    write("%\n"),!,
+    write_ls(Ls,NWords).
