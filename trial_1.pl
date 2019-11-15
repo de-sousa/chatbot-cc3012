@@ -1,5 +1,8 @@
 % --------------------------------------------------------
-% answers(Words,List) => Words
+% answers/2 : answers(Words,List)
+% - answers/2 prepara a lista de palavras, Words, para ser
+% analisada pelo attribution/3. sentences/1 é um facto que
+% corresponde ao array com todas as respostas possíveis.
 answers(Words,[ans(["I'm","sorry,","can","you","repeat?"],1)]):-
     quick_sort(Words,Phrase),
     sentences(Sentences),
@@ -9,10 +12,11 @@ answers(Words,List):-
     sentences(Sentences),
     attribution(Phrase,Sentences,List),!.
 
-% --------------------------------------------------------
-% attribution(Words,Database,PossibleAnswers) => attribution analisa a
-% Base de Dados e as PossibleAnswers contêm o tuplo ans(Frase,Ratio),
-% em que Ratio (>0) corresponde à pontuação atribuída à Frase
+% --------------------------------------------------------------
+% attribution/3 : attribution(Words,BaseDeDados,PossibleAnswers)
+% - attribution/3 analisa a BaseDeDados e as PossibleAnswers
+% contêm o tuplo ans(Frase,Ratio), em que Ratio (>0) corresponde
+% à pontuação atribuída à Frase.
 attribution(_,[],[]).
 attribution(Words,[(Ph,Ans)|S],[ans(Ans1,Score)|List]):-
     split_string(Ph," "," ",Ph1),
@@ -27,23 +31,27 @@ attribution(Words,[(Ph,_)|S],List):-
     attribution(Words,S,List),!.
 
 % --------------------------------------------------------
-% ratio(Lista1,Lista2,Score) => Score é o rácio de nrs de palavras em
-% Lista1 que estão em Lista2 sobre o nr de eltos de Lista2.
+% ratio/3 : ratio(Lista1,Lista2,Score)
+% - Score é a divisão do número de palavras em Lista1 que
+% estão em Lista2 pelo número de palavras em Lista2.
 ratio(Words,Phrase,Score):-
     number(Phrase,X),
     number(Words,Phrase,Y),
     Score is Y/X,!.
 
 % --------------------------------------------------------
-% number(Lista,N) => N é o número de elementos.
+% number/2 : (Lista,N)
+% - N é o número de elementos de Lista
 number([],0).
 number([_|Xs],S) :-
     number(Xs,Z),
     S is Z+1,!.
 
 % --------------------------------------------------------
-% number(Lista1,Lista2,N) => N é o número de eltos que
-% tais que se pertencem a Lista1, pertencem a Lista2.
+% number/3 : number(Lista1,Lista2,N)
+% - N é o número de elementos da interseção de Lista1 com
+% Lista2. Esta definição funciona porque ambas as Listas
+% estão ordenadas.
 number([],_,0).
 number(_,[],0).
 number([W|Words],[Ph|Phrase],S):-
@@ -60,28 +68,41 @@ number([W|Words],[Ph|Phrase],S):-
     S is X,!.
 
 % --------------------------------------------------------
-% quicksort(L1,L2) => Simple sorting, por ordem crescente.
-% Elementos iguais, são removidos, ficando só um representante.
+% quick_sort/2 : quick_sort(L1,L2)
+% - L2 corresponde ao array ordenado L1, sem elementos
+% repetidos.
 quick_sort([],[]).
 quick_sort([X|Xs],S) :-
-    compareList(>,X,Xs,A),
-    compareList(<,X,Xs,B),
+    compare_list(>,X,Xs,A),
+    compare_list(<,X,Xs,B),
     quick_sort(A,Y),
     quick_sort(B,Z),
     append(Y,[X|Z],S).
 
-compareList(_,_,[],[]).
-compareList(C,X,[Y|Ys],[Y|S]):-
+% --------------------------------------------------------
+% compare_list/4 : compare_list(Op,El,L1,L2)
+% - L2 contém todos os elementos L de L1 tal que El `Op` L,
+% por exemplo, caso Op=<, L2 contém todos os elementos de
+% L1 maiores que El.
+compare_list(_,_,[],[]).
+compare_list(C,X,[Y|Ys],[Y|S]):-
     compare(C,X,Y),
-    compareList(C,X,Ys,S).
-compareList(C,X,[Y|Ys],S):-
+    compare_list(C,X,Ys,S).
+compare_list(C,X,[Y|Ys],S):-
     not(compare(C,X,Y)),
-    compareList(C,X,Ys,S).
+    compare_list(C,X,Ys,S).
 
+% --------------------------------------------------------
+% best_answer/2 : best_answer(Poss,Best)
+% - Best corresponde à resposta S tal que o par(ans(S,X))
+% pertence a Poss em que X é o maior score.
 best_answer([ans(Str,_)],Str).
 best_answer(List,S):-
     best_answer_add(List,S,_).
 
+% --------------------------------------------------------
+% best_answer_add/3
+% - função auxiliar de best_answer.
 best_answer_add([ans(Str,Sco)],Str,Sco).
 best_answer_add([ans(Str,Sco)|Ans],Str,Sco):-
     best_answer_add(Ans,_,X),
@@ -90,6 +111,10 @@ best_answer_add([ans(_,Sco)|Ans],S,X):-
     best_answer_add(Ans,S,X),
     not(Sco>X),!.
 
+% --------------------------------------------------------
+% runifanswer/2 : runifanswer(S,A)
+% - A é uma escolha aleatória das frase possíveis em S,
+% com igual distribuição.
 runifanswer(Sen,Ans):-
     answers(Sen,List),
     length(List,X),
@@ -97,31 +122,55 @@ runifanswer(Sen,Ans):-
     random_between(0,S,R),
     nth0(R,List,ans(Ans,_)).
 
+% --------------------------------------------------------
+% rpropanswer/2 : rpropanswer(S,A)
+% - A é uma escolha aleatória das respostas possíveis em
+% S, tendo em conta o score de cada resposta.
 rpropanswer(Sen,Ans):-
     answers(Sen,List),
     sum_score(List,X),
     random(0,X,Y),
     select_score(Y,List,Ans).
 
+% --------------------------------------------------------
+% sum_score/2 : sum_score(L,S)
+% S contém a soma de todos os scores das respostas em L.
 sum_score([],0).
 sum_score([ans(_,Score)|Ls],X):-
     sum_score(Ls,Y),
     X is Score+Y.
 
+% --------------------------------------------------------
+% select_score/3 : select_score(V,L,A)
+% - A contém a resposta dependendo da posição de V no
+% segmento de reta [0,soma dos scores das respostas em L].
+% Quanto maior for o score de A, maior é a probabilidade
+% de A ser escolhido.
 select_score(Y,[ans(_,Sco)|List],Ans):-
     Y>Sco,
     X is Y-Sco,
     select_score(X,List,Ans),!.
 select_score(Y,[ans(Sen,Sco)|_],Sen):-
-    Sco>Y,!.
+    Sco>=Y,!.
 
-read_line(Words) :-
+% --------------------------------------------------------
+% read_line/1 : read_line(Str)
+% - Lê Str, uma string, do Input.
+read_line(Str) :-
     current_input(Input),
-    read_string(Input,"\n"," .,!?",_,Words).
+    read_string(Input,"\n"," .,!?",_,Str).
 
+% --------------------------------------------------------
+% chat/1 : chat(X)
+% - Inicia a conversa com o chatbot, e X contém a string
+% correspondente a toda a conversa.
 chat(X) :-
     chat("",X).
 
+% --------------------------------------------------------
+% chat/2 : chat(L1,L2)
+% - L2 contém toda a conversa. L1 contém a conversa até ao
+% momento atual e eventualmente unificará com L2.
 chat(X,Last) :-
     read_line(Input),
     string_lower(Input,In),
@@ -133,6 +182,11 @@ chat(X,Last) :-
     split_string(In," "," ",InLs),
     chat(InLs,Y,Last),!.
 
+% --------------------------------------------------------
+% chat/3 : chat(Input,L1,L2)
+% - Caso o utilizador queira terminar a conversa, analisando
+% o Input, atualizará L1 com o Output correspondente e
+% direcionará o programa para chat_exit/2
 chat(Input,X,Last):-
     rpropanswer(Input,S),
     split_string("Are you sure you want to leave?"," "," ",S),
@@ -143,12 +197,15 @@ chat(Input,X,Last):-
     string_chars(Y,Ys),
     chat_exit(Y,Last).
 
+% --------------------------------------------------------
+% chat/3 : chat(Input,L1,L2)
+% - Avalia o Input, escolhendo o melhor Output, que será
+% adicionado a X. L2 contém a string correspondente a toda
+% a conversa
 chat(Input,X,Last):-
     rpropanswer(Input,Output),
-
     split_string("Are you sure you want to leave?"," "," ",S),
     not(compare(=,Output,S)),
-
     write_list(Output),
     wordls_to_chls(Output,Os),
     string_chars(X,Xs),
@@ -156,6 +213,12 @@ chat(Input,X,Last):-
     string_chars(Y,Ys),
     chat(Y,Last). 
 
+% --------------------------------------------------------
+% chat_exit/2 : chat_exit(L1,L2)
+% - L2 contém toda a conversa. L1 contém a conversa até ao
+% momento atual e eventualmente unificará com L2. A
+% diferença de chat/2 para chat_exit/2 é que chat_exit/2
+% avalia se o utilizador quer realmente terminar a conversa.
 chat_exit(X,Last) :-
     read_line(Input),
     string_lower(Input,In),
