@@ -191,7 +191,7 @@ chat(X,Last) :-
 chat(Input,X,Last):-
     rpropanswer(Input,S),
     split_string("Are you sure you want to leave?"," "," ",S),
-    write("Are you sure you want to leave?\n"),
+    write("> Are you sure you want to leave?\n"),
     string_chars("Are you sure you want to leave?\n",Ss),
     string_chars(X,Xs),
     append(Xs,Ss,Ys),
@@ -201,6 +201,7 @@ chat(Input,X,Last):-
     rpropanswer(Input,Output),
     split_string("Are you sure you want to leave?"," "," ",S),
     not(compare(=,Output,S)),
+    write("> "),
     write_list(Output),
     wordls_to_chls(Output,Os),
     string_chars(X,Xs),
@@ -234,27 +235,29 @@ chat_exit(X,Last) :-
 chat_exit(Input,X,Y):-
     ex_ans(Input,[ans(S,_)]),
     split_string("Bye!"," "," ",S),
-    write("Bye!\n"),
+    write("> Bye!\n"),
     string_chars("Bye!",Is),
     string_chars(X,Xs),
     append(Xs,Is,Ys),
     string_chars(Y,Ys),!.
 chat_exit(Input,X,Last):-
     ex_ans(Input,[ans(S,_)]),
-    split_string("Thank you! In what can i help you?"," "," ",S),
-    string_chars("Thank you! In what can i help you?",Is),
+    split_string("Thank you! In what can I help you?"," "," ",S),
+    string_chars("Thank you! In what can I help you?",Is),
     string_chars(X,Xs),
     append(Xs,Is,Ys),
-    string_chars(Y,Ys),  
+    string_chars(Y,Ys),
+    write("> "),
     write_list(S),!,
     chat(Y,Last).
-chat_exit(_,X,Last):-
-    write("I'm sorry, can you repeat?"),!,
+chat_exit(Input,X,Last):-
+    ex_ans(Input,[]),
+    write("> I'm sorry, can you repeat?\n"),
     string_chars("I'm sorry, can you repeat?",Is),
     string_chars(X,Xs),
     append(Xs,Is,Ys),
     string_chars(Y,Ys),
-    chat_exit(X,Y,Last).
+    chat_exit(Y,Last).
 
 % --------------------------------------------------------
 % ex_ans/2 : ex_ans(Words,List)
@@ -379,12 +382,14 @@ argv(-Argv)
 
 ex_sentences(
     [("s sim y yes","Bye!"),
-     ("n não nein no","Thank you! In what can I help you?")
+     ("n nein no não","Thank you! In what can I help you?")
     ]).
 
 
 % --------------------------------------------------------
-% stats/1 => Takes a list with a conversation and prints out stats from that convers.
+% stats/1
+% - Pega numa string com a conversa e imprime estatistícas
+% dessa conversa
 stats(X) :-
     string_lower(X,Xs),
     split_string(Xs,"\n"," ",Xss),
@@ -400,27 +405,41 @@ stats(X) :-
     write("Word Frequency is:\n"),
     write_ls(Ls,NWords),!.
 
+% --------------------------------------------------------
+% stats_words/2
+% - Calcula o número de palavras numa lista de strings.
 stats_words([],0).
 stats_words([""|Xs],M):-
     stats_words(Xs,M).
 stats_words([X|Xs], N) :-
     not(X=""),
     stats_words(Xs,M),
-    split_string(X," ",",.!?",Y),
+    split_string(X," ",",.!?()",Y),
     length(Y,L),
     N is L+M.
 
+% --------------------------------------------------------
+% stats_freq/2
+% - Prepara uma lista de strings e chama stats_freq/3.
 stats_freq([],[]).
 stats_freq([X|Xss],Ls):-
     stats_freq(Xss,Ms),
     split_string(X," "," .,!?",Y),
     stats_freq(Y,Ms,Ls).
 
+% --------------------------------------------------------
+% stats_freq/3
+% - Prepara uma lista de palavras e adiciona-as à estrutura
+% de dados que contém informação sobre a sua quantidade.
 stats_freq([],Ms,Ms).
 stats_freq([X|Xs],Ms,Ls):-
     stats_freq(Xs,Ms,Ns),
     add(X,Ns,Ls).
 
+% --------------------------------------------------------
+% add/3 : add(X,L1,L2)
+% - L2 é L1 em que o tuplo com a palavra e a sua
+% quantidade, (X,N), passa a ser (X,N+1).
 add(X,[],[(X,1)]).
 add(X,[(X,N)|Ms],[(X,M)|Ms]) :-
     M is N+1,!.
@@ -428,6 +447,11 @@ add(X,[(Y,N)|Ms],[(Y,N)|Ns]):-
     not(X=Y),
     add(X,Ms,Ns),!.
 
+% --------------------------------------------------------
+% write_ls/2 : write_ls(ED,Tot)
+% - Imprime o resultado de stats_freq/2, em que na
+% estrutura de dados, cada tuplo com palavra e quantidade,
+% (X,N) é imprimido da forma "- X: N/Tot".
 write_ls([],_).
 write_ls([(L1,L2)|Ls],NWords) :-
     write("- "),
@@ -436,4 +460,4 @@ write_ls([(L1,L2)|Ls],NWords) :-
     F is L2/NWords,
     write(F),
     write("%\n"),!,
-write_ls(Ls,NWords).
+    write_ls(Ls,NWords).
