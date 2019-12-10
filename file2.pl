@@ -5,7 +5,7 @@
 sentence_type(L,T) :-
     type(T,L,_).
 
-type(T) --> [_],type(T),!; usefulword(T),!.
+type(T) -->  usefulword(T),! ; [_],type(T),!.
 %-- greetings
 usefulword(T) --> ["hello"], {getType(1,T)}.
 usefulword(T) --> ["hi"], {getType(1,T)}.
