@@ -17,16 +17,33 @@ usefulword("offerexample") --> ["example"]; ["ex"].
 semtrans(A,B,C):-
     flow(Xs),
     member((A,B,C),Xs).
-
 flow([
+	    (["b","c"],"a",2),
 	    ("offerhelp","greetings",1),
-	    ("greetings","greetings",1),
-	    (["b","c"],"a",2)
+	    ("greetings","greetings",2)
     ]).
 
 
+chataway(0):-
+    write("Sorry, but now i have to go, see you later\n"),!.
+chataway(L):-
+    L0 is L-1,
+    output("offerhelp"),
+    chataway(L0).
 
+output(T):-
+    phrases(T,Ls),
+    length(Ls,L),
+    random_between(1,L,R),
+    nth1(R,Ls,P),
+    write(P).
 
+phrases("offerhelp",[
+	   "do you need help?\n",
+	   "can i help you?\n",
+	   "i would like to help you\n",
+	   "what do you want?\n"
+       ]).
 
 take(_,[],[]).
 take(0,_,[]).
