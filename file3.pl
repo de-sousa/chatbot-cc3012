@@ -81,9 +81,6 @@ select(Ts,T) :-
 
 %---------------------------
 
-chataway(L) :-
-    chat(L,[]). 
-
 write_fancy([]):-
     write("\n").
 write_fancy([X|Xs]):-
@@ -91,5 +88,14 @@ write_fancy([X|Xs]):-
     write(X),
     write_fancy(Xs).
 
-chat(0,_) :- sentence_type(A,"goodbye"), write("- "), write_fancy(A),!.
-chat(N,Ms) :- select(Ms,T),!, sentence_type(A,T), write("-"), write_fancy(A), M is N-1, chat(M,[T|Ms]).
+chataway_beta(L) :-
+    chat_beta(L,[]). 
+
+chat_beta(0,_) :- sentence_type(A,"goodbye"), write("- "), write_fancy(A),!.
+chat_beta(N,Ms) :- select(Ms,T),!, sentence_type(A,T), write("-"), write_fancy(A), M is N-1, chat_beta(M,[T|Ms]).
+
+chataway(L) :-
+    chat(L,[],_,[]).
+
+chat(0,_) --> type("goodbye"),!.
+chat(N,Ms) --> {M is N-1, select(Ms,T),!}, type(T), chat(M,[T|Ms]).
