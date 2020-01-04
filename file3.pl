@@ -1,6 +1,8 @@
 nats(0,[]).
 nats(N,[N|Xs]) :-
-    X is N-1, nats(X,Xs).
+    not(compare(<,N,1)),
+    X is N-1,
+    nats(X,Xs).
 
 draw(N,R) :-
     nats(N,A), random_permutation(A,B),!, member(R,B).
@@ -99,3 +101,6 @@ chataway(L) :-
 
 chat(0,_) --> type("goodbye"),!.
 chat(N,Ms) --> {M is N-1, select(Ms,T),!}, type(T), chat(M,[T|Ms]).
+
+chat_at_aim(From,To,L,_):-
+    chat(L,[],From,To).
