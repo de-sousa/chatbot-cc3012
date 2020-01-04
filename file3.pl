@@ -45,12 +45,12 @@ sumall(A,[(A,_,C)|Flow],Sum):-sumall(A,Flow,S1), Sum is C+S1.
 sumall(A,[(B,_,_)|Flow],Sum):-not(A=B),sumall(A,Flow,Sum).
 
 choose(A,[(A,B,C)|_],Ca,R,(B,C)):-
-    Ca is Ca+C,
-    not(compare(>,R,Ca)).
+    Ca1 is Ca+C,
+    compare(<,R,Ca1).
 choose(A,[(A,_,C)|Flow],Ca,R,(D,E)):-
-    Ca is Ca+C,
-    compare(>,R,Ca),
-    choose(A,Flow,Ca,R,(D,E)).
+    Ca1 is Ca+C,
+    compare(>,R,Ca1),
+    choose(A,Flow,Ca1,R,(D,E)).
 choose(A,[(B,_,_)|Flow],Ca,R,(C,D)):-
     not(A=B),
     choose(A,Flow,Ca,R,(C,D)).
@@ -75,8 +75,7 @@ flow([
 
 select(Ts,T) :-
     nats(3,Ns),
-    random_permutation(Ns,N1s),
-    member(A,N1s),
+    member(A,Ns),
     take(A,Ts,X),
     semtrans(X,T,_).
 
@@ -85,5 +84,12 @@ select(Ts,T) :-
 chataway(L) :-
     chat(L,[]). 
 
-chat(0,_) :- sentence_type(A,"goodbye"), write(A),!.
-chat(N,Ms) :- select(Ms,T),!, sentence_type(A,T), write(A), M is N-1, chat(M,[T|Ms]).
+write_fancy([]):-
+    write("\n").
+write_fancy([X|Xs]):-
+    write(" "),
+    write(X),
+    write_fancy(Xs).
+
+chat(0,_) :- sentence_type(A,"goodbye"), write("- "), write_fancy(A),!.
+chat(N,Ms) :- select(Ms,T),!, sentence_type(A,T), write("-"), write_fancy(A), M is N-1, chat(M,[T|Ms]).
