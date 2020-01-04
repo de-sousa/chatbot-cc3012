@@ -24,12 +24,11 @@ flow([
     ]).
 
 
-chataway(0):-
-    write("Sorry, but now i have to go, see you later\n"),!.
 chataway(L):-
-    L0 is L-1,
-    output("offerhelp"),
-    chataway(L0).
+    chat(L,[],_,[]).
+
+chat(0,_) --> !.
+chat(L,Ts) --> type(T),!, {choflow([T|Ts],As), output(As), L0 is L-1},!, chat(L0,[T|Ts]).
 
 output(T):-
     phrases(T,Ls),
