@@ -15,12 +15,12 @@ usefulword("offerexample") --> ["example"]; ["ex"].
 % sentence_type("greetings","greetings",C).
 % C unifies with 0.9.
 semtrans(A,B,C):-
-    flow(Xs),
-    member((A,B,C),Xs).
+    flow(Xs),!,
+    member((A,B,C),Xs),
+    not(C==0).
 flow([
-	    (["b","c"],"a",2),
-	    ("offerhelp","greetings",1),
-	    ("greetings","greetings",2)
+	    (["greetings","greetings"],"offerhelp",1),
+	    (["greetings"],"greetings",1)
     ]).
 
 
