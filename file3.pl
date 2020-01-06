@@ -1,12 +1,12 @@
-nats_inc(N,Xs):-
-    nats(N,Ys),
-    reverse(Ys,Xs).
-
-nats(0,[]).
-nats(N,[N|Xs]) :-
+nats_down(0,[]).
+nats_down(N,[N|Xs]) :-
     not(compare(<,N,1)),
     X is N-1,
-    nats(X,Xs).
+    nats_down(X,Xs).
+
+nats_up(N,Xs):-
+    nats_down(N,Ys),
+    reverse(Ys,Xs).
 
 reverse([],[]).
 reverse([X|Xs],Ys):-
@@ -24,21 +24,20 @@ take(N,[X|Xs],[X|Ys]) :-
     M is N-1,
     take(M,Xs,Ys).
 
-
 % write(Xs)
 % write outputs a list of words
-write_fs([]).
-write_fs([X|Xs]):-
-    write_f(X),
-    write_fs(Xs).
-write_f(A):-
-    write("-"), write_fancy(A).
-write_fancy([]):-
+write_fss([]).
+write_fss([X|Xs]):-
+    write_fs(X),
+    write_fss(Xs).
+write_fs(A):-
+    write("-"), write_f(A).
+write_f([]):-
     write("\n").
-write_fancy([X|Xs]):-
+write_f([X|Xs]):-
     write(" "),
     write(X),
-    write_fancy(Xs).
+    write_f(Xs).
 
 group([],[]).
 group(As,[Xs|Bs]):-
@@ -48,7 +47,22 @@ group(As,[Xs|Bs]):-
 
 output(A):-
     group(A,B),
-    write_fs(B).
+    write_fss(B).
+
+list_n(_,0,[]).
+list_n(A,N,[A|As]):-
+    M is N-1,
+    list_n(A,M,As).
+ 
+list_ns(_,[],0,[]).
+list_ns(A,[(A,B,C)|Flow],Sum,Cs):-
+    list_n((B,C),C,As),
+    append(As,Bs,Cs),
+    list_ns(A,Flow,S1,Bs),
+    Sum is C+S1.
+list_ns(A,[(B,_,_)|Flow],Sum,Cs):-
+    not(A=B),
+    list_ns(A,Flow,Sum,Cs).
 
 %-------------------------------------------------------------------------------------------------
 
@@ -57,26 +71,12 @@ output(A):-
 
 
 
-
-% Auxiliar Predicates
-
-listall(_,0,[]).
-listall(A,N,[A|As]):-
-    M is N-1,
-    listall(A,M,As).
-    
-
-sumall(_,[],0,[]).
-sumall(A,[(A,B,C)|Flow],Sum,Cs):-listall((B,C),C,As), append(As,Bs,Cs), sumall(A,Flow,S1,Bs), Sum is C+S1.
-sumall(A,[(B,_,_)|Flow],Sum,Cs):-not(A=B),sumall(A,Flow,Sum,Cs).
-
 % ex:
-% sentence_type(["greetings"],"greetings",C).
+% semtrans(["greetings"],"greetings",C).
 % C unifies with 60.
-
 semtrans(A,B,Pc):-
     flow(F),!,
-    sumall(A,F,S,Ls),
+    list_ns(A,F,S,Ls),
     draw(S,R),
     nth1(R,Ls,(B,C)),
     Pc is C/100.0.
@@ -93,18 +93,18 @@ flow([
 	    (_,_,1)
 	]).
 
-select(Ts,T) :-
-    nats(3,Ns),!,
-    member(A,Ns),
-    take(A,Ts,X),
-    semtrans(X,T,_).
-
-
 % escolhe o próximo tipo, baseado nos que ja ocorreram: select
 % sentence type gera frase desse tipo
-% write: dá output à frase
+% output: dá output à frase
 chataway(L) :-
     chat(L,[],A,[]),!, output(A).
 
 chat(1,_) --> type("goodbye"),!.
 chat(N,Ms) --> {M is N-1, select(Ms,T),!}, type(T), chat(M,[T|Ms]).
+
+select(Ts,T) :-
+    nats_down(3,Ns),!,
+    member(A,Ns),
+    take(A,Ts,X),
+    semtrans(X,T,_).
+

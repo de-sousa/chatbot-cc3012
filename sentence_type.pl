@@ -127,12 +127,12 @@ e(3) --> ["I"], ["don't"], ["have"], ["more"], ["time..."], ["Anyway,"],["thank"
 
 
 % auxiliar predicates
-nats(0,[]).
-nats(N,[N|Xs]) :-
+nats_down(0,[]).
+nats_down(N,[N|Xs]) :-
     not(compare(<,N,1)),
     X is N-1,
-    nats(X,Xs).
+    nats_down(X,Xs).
 
 draw(N,R) :-
-    nats(N,A), random_permutation(A,B),!, member(R,B).
+    nats_down(N,A), random_permutation(A,B),!, member(R,B).
 
