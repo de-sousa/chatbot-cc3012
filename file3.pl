@@ -80,18 +80,36 @@ semtrans(A,B,Pc):-
     flow(F),!,
     list_ns(A,F,Ls),
     length(Ls,S),
+    not(S=1),
     draw(S,R),
     nth1(R,Ls,(B,C)),
     Pc is C/100.0.
 
 flow([
-	    ([],"greetings",99),
-	    (["greetings"],"greetings",60),
-	    (["greetings"],"askhelp",39),
-	    (["askhelp"],"offerhelp",99),
-	    (["offerhelp"],"proposeanswerquestion",99),
-	    (["greetings","greetings"],"askhelp",99),
-	    (_,_,1)
+	    ([],"greetings",100),
+	    (["greetings","greetings"],"askhelp",100),
+	    (["greetings"],"greetings",50),
+	    (["greetings"],"askhelp",50),
+	    (["askhelp"],"offerhelp",100),
+	    (["offerhelp"],"q1",16),
+	    (["offerhelp"],"q2",17),
+	    (["offerhelp"],"q3",16),
+	    (["offerhelp"],"q4",17),
+	    (["offerhelp"],"q5",17),
+	    (["offerhelp"],"q6",17),
+	    (["q1"],"a1",100),
+	    (["q2"],"a2",100),
+	    (["q3"],"a3",100),
+	    (["q4"],"a4",100),
+	    (["q5"],"a5",100),
+	    (["q6"],"a6",100),
+	    (["a1"],"thanks",100),
+	    (["a2"],"thanks",100),
+	    (["a3"],"thanks",100),
+	    (["a4"],"thanks",100),
+	    (["a5"],"thanks",100),
+	    (["a6"],"thanks",100),
+	    (["thanks"],"offerhelp",100)
 	]).
 
 % chataway(L):
@@ -104,7 +122,7 @@ chat(1,_,[A]) -->
     {member(A,["goodbye",_])},
     type(A),!.
 chat(N,Ms,[T|Ns]) -->
-    {M is N-1, select(Ms,T),!},
+    {M is N-1, select(Ms,T)},
     type(T),
     chat(M,[T|Ms],Ns).
 

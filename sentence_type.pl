@@ -57,7 +57,27 @@ question(4) --> ["What"],["does"],["the"],["select"],["predicate"],["do?\n- sele
 question(5) --> ["What"],["does"],["the"],["prefix"],["predicate"],["do?\n- prefix(Part,Whole"], ["is"], ["true"],["if"],["Part"],["is"],["a"],["leading"],["substring"],["of"],["Whole"].
 question(6) --> ["What"],["does"],["the"],["nth0"],["predicate"],["do?\n- nth0(Id,L,X)"],["is"],["true"],["if"],["the"],["element"],["X"],["is"],["Id'th"],["element"],["of"],["the"],["list."],["Counting"],["starts"],["at"],["zero"]. 
 
+% question
+type("q1") --> ["What does the"],["append"],["predicate do?"].
+type("q2") --> ["What does the"],["sort"],["predicate do?"].
+type("q3") --> ["What does the"],["member"],["predicate do?"].
+type("q4") --> ["What does the"],["select"],["predicate do?"].
+type("q5") --> ["What does the"],["prefix"],["predicate do?"].
+type("q6") --> ["What does the"],["nth0"],["predicate do?"].
 
+% answer
+type("a1") --> ["append(L1,L2,L3)"], ["L3"],["is"],["the"],["result"],["of"],["the"],["concatenation"],["of"],["L1"],["and"],["L2"].
+type("a2") --> ["sort(L1,L2)"], ["L2"], ["is"], ["the"], ["result"], ["of"], ["sorting"], ["the"], ["list"], ["L1"],["by"],["the"],["natural"], ["order"],["of"],["the"],["elements"].
+type("a3") --> ["member(X,L)"], ["is"], ["true"], ["if"], ["X"],["is"],["an"],["element"],["of"],["L"].
+type("a4") --> ["select(X,L1,L2)"], ["is"], ["true"], ["if"], ["L2"],["is"],["the"],["list"],["L1"],["without"],["the"],["X"].
+type("a5") --> ["prefix(Part,Whole"], ["is"], ["true"],["if"],["Part"],["is"],["a"],["leading"],["substring"],["of"],["Whole"].
+type("a6") --> ["nth0(Id,L,X)"],["is"],["true"],["if"],["the"],["element"],["X"],["is"],["Id'th"],["element"],["of"],["the"],["list."],["Counting"],["starts"],["at"],["zero"].
+
+
+
+
+% thanks
+type("thanks") --> ["Oh,"],["thank"],["you"].
 
 % goodbye
 type("goodbye") --> {draw(2,R)},who(R).
