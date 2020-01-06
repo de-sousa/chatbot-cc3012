@@ -71,15 +71,11 @@ list_ns(A,[(B,_,_)|Flow],Cs):-
     list_ns(A,Flow,Cs).
 
 %-------------------------------------------------------------------------------------------------
-
 % Predicates of the Assignment
 
-
-
-
-% ex:
-% semtrans(["greetings"],"greetings",C).
-% C unifies with 60.
+% semtrans(As,B,Pc):
+% determina o flow da conversa
+% vindo de As há a probabilidade Pc de B ser escolhido
 semtrans(A,B,Pc):-
     flow(F),!,
     list_ns(A,F,Ls),
@@ -87,7 +83,6 @@ semtrans(A,B,Pc):-
     draw(S,R),
     nth1(R,Ls,(B,C)),
     Pc is C/100.0.
-
 
 flow([
 	    ([],"greetings",99),
@@ -100,14 +95,19 @@ flow([
 	    (_,_,1)
 	]).
 
-% escolhe o próximo tipo, baseado nos que ja ocorreram: select
-% sentence type gera frase desse tipo
-% output: dá output à frase
+% chataway(L):
+% produz uma conversa de comprimento L
 chataway(L) :-
-    chat(L,[],A,[]),!, output(A).
+    chat(L,[],_,A,[]),!,
+    output(A).
 
-chat(1,_) --> type("goodbye"),!.
-chat(N,Ms) --> {M is N-1, select(Ms,T),!}, type(T), chat(M,[T|Ms]).
+chat(1,_,[A]) -->
+    {member(A,["goodbye",_])},
+    type(A),!.
+chat(N,Ms,[T|Ns]) -->
+    {M is N-1, select(Ms,T),!},
+    type(T),
+    chat(M,[T|Ms],Ns).
 
 select(Ts,T) :-
     nats_down(3,Ns),!,
@@ -115,3 +115,11 @@ select(Ts,T) :-
     take(A,Ts,X),
     semtrans(X,T,_).
 
+chat_at_aim(From,To,L,_):-
+    group(From,As),
+    length(As,N1),!,
+    chat(N1,[],Ms,From,[]),!,
+    reverse(Ms,Ns),
+    chat(L,Ns,_,A,To),!,
+    output(From),
+    output(A).
