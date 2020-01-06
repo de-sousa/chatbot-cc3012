@@ -14,7 +14,7 @@ reverse([X|Xs],Ys):-
     append(Zs,[X],Ys).
 
 draw(N,R) :-
-    nats(N,A), random_permutation(A,B),!, member(R,B).
+    nats_down(N,A), random_permutation(A,B),!, member(R,B).
 
 % take(N,L1,L2)
 % take takes the N first elements from list L1 and gives them in L2, in the same order
@@ -49,20 +49,26 @@ output(A):-
     group(A,B),
     write_fss(B).
 
+% list_n(A,N,As):
+% As é a lista que contém A N vezes
+% ex: 
+% :- list_n(a,3,As).
+% As = [a, a, a] .
 list_n(_,0,[]).
 list_n(A,N,[A|As]):-
     M is N-1,
     list_n(A,M,As).
- 
-list_ns(_,[],0,[]).
-list_ns(A,[(A,B,C)|Flow],Sum,Cs):-
+
+% list_ns(A,Flow,As)
+% As é a lista de todas as possibilidades para que A pode ir na conversa, presentes de acordo com a sua probabilidade de ser escolhido
+list_ns(_,[],[]).
+list_ns(A,[(A,B,C)|Flow],Cs):-
     list_n((B,C),C,As),
     append(As,Bs,Cs),
-    list_ns(A,Flow,S1,Bs),
-    Sum is C+S1.
-list_ns(A,[(B,_,_)|Flow],Sum,Cs):-
+    list_ns(A,Flow,Bs).
+list_ns(A,[(B,_,_)|Flow],Cs):-
     not(A=B),
-    list_ns(A,Flow,Sum,Cs).
+    list_ns(A,Flow,Cs).
 
 %-------------------------------------------------------------------------------------------------
 
@@ -76,7 +82,8 @@ list_ns(A,[(B,_,_)|Flow],Sum,Cs):-
 % C unifies with 60.
 semtrans(A,B,Pc):-
     flow(F),!,
-    list_ns(A,F,S,Ls),
+    list_ns(A,F,Ls),
+    length(Ls,S),
     draw(S,R),
     nth1(R,Ls,(B,C)),
     Pc is C/100.0.
