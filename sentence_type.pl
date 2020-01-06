@@ -80,7 +80,7 @@ type("a6") --> ["nth0(Id,L,X)"],["is"],["true"],["if"],["the"],["element"],["X"]
 type("thanks") --> ["Oh,"],["thank"],["you"].
 
 % goodbye
-type("goodbye") --> {draw(2,R)},who(R).
+type("goodbye") --> {draw(2,R)}, who(R).
 
 who(1) --> {draw(4,R)}, c(R).
 who(2) --> {draw(3,R)}, d(R).
@@ -95,7 +95,7 @@ d(2) --> ["Thankful"], ["for"], ["helping"], ["you!"].
 d(3) --> ["Bye!"], ["Hope"], ["to"], ["see"], ["you"], ["soon."].
 
 % rushedgoodbye
-type("rushedgoodbye") --> {draw(R,3)}, e(R).
+type("rushedgoodbye") --> {draw(3,R)}, e(R).
 
 e(1) --> ["I'm"],["sorry"],["but"],["i"],["need"],["to"],["go..."].
 e(2) --> ["I'm"],["in"],["a"],["hurry..."],["i'm"],["sorry"].

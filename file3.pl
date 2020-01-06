@@ -118,9 +118,13 @@ chataway(L) :-
     chat(L,[],_,A,[]),!,
     output(A).
 
-chat(1,_,[A]) -->
+chat(1,[T|_],[A]) -->    
+    {not(T="thanks"),
+     member(A,["rushedgoodbye",_])},
+    type(A).
+chat(1,["thanks"|_],[A]) -->
     {member(A,["goodbye",_])},
-    type(A),!.
+    type(A).
 chat(N,Ms,[T|Ns]) -->
     {M is N-1, select(Ms,T)},
     type(T),
