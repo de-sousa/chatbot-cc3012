@@ -27,7 +27,11 @@ take(N,[X|Xs],[X|Ys]) :-
 
 
 % write(Xs)
-% write outputs a list of words  
+% write outputs a list of words
+write_fs([]).
+write_fs([X|Xs]):-
+    write_f(X),
+    write_fs(Xs).
 write_f(A):-
     write("-"), write_fancy(A).
 write_fancy([]):-
@@ -36,6 +40,16 @@ write_fancy([X|Xs]):-
     write(" "),
     write(X),
     write_fancy(Xs).
+
+group([],[]).
+group(As,[Xs|Bs]):-
+    append(Xs,Ys,As),
+    sentence_type(Xs,_),
+    group(Ys,Bs).
+
+output(A):-
+    group(A,B),
+    write_fs(B).
 
 %-------------------------------------------------------------------------------------------------
 
@@ -125,7 +139,7 @@ chat(N,Ms,[A|As]) :- select(Ms,T),!, sentence_type(A,T), write_f(A), M is N-1,!,
 % sentence type gera frase desse tipo
 % write: dá output à frase
 chataway_beta(L) :-
-    chat_beta(L,[],A,[]), write(A).
+    chat_beta(L,[],A,[]), output(A).
 
 chat_beta(1,_) --> type("goodbye"),!.
 chat_beta(N,Ms) --> {M is N-1, select(Ms,T),!}, type(T), chat_beta(M,[T|Ms]).
