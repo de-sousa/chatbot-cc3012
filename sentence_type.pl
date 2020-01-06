@@ -6,8 +6,8 @@ sentence_type(S,T):-
 % greetings
 type("greetings") -->  {draw(2,R),draw(3,T),draw(4,U)}, hi(R),to(T),extend(U).
 
-hi(1) --> ["Hi,"].
-hi(2) --> ["Hello,"].
+hi(1) --> ["Hi"].
+hi(2) --> ["Hello"].
 
 to(1) --> ["chatbot!"].
 to(2) --> ["dear"], ["friend."].
@@ -47,50 +47,6 @@ a(2) --> ["does"], ["the"], ["human"].
 
 b(1) --> ["the"], ["human"], ["needs"].
 b(2) --> ["you"], ["need"].
-
-
-% greetings
-type("greetings") -->  {draw(2,R)}, hi(R), {draw(4,T)}, to(T).
-
-hi(1) --> ["hi"].
-hi(2) --> ["hello"].
-
-to(1) --> ["chatbot"].
-to(2) --> ["dear"], ["friend"].
-to(3) --> ["friend"].
-to(4) --> [].
-
-
-% askhelp
-type("askhelp") --> {draw(3,R),draw(4,T)}, modalverb(R),chatbot(T),["help"],["me?"].
-
-modalverb(1) --> ["can"].
-modalverb(2) --> ["could"].
-modalverb(3) --> ["might"].
-
-chatbot(1) --> ["you"].
-chatbot(2) --> ["you,","please,"].
-chatbot(2) --> ["the"], ["chatbot"].
-chatbot(4) --> ["the"], ["chatbot,"], ["please,"].
-
-
-% offerhelp
-type("offerhelp") -->
-    {draw(2,R), draw(3,T)}, accepting(R), asking(T).
-
-accepting(1) --> ["of"],["course!"].
-accepting(2) --> ["yes!"].
-
-asking(1) --> {draw(2,r)}, ["in"], ["what"], a(r), ["need"], ["help?"].
-asking(2) --> ["where"], ["can"], ["I"], ["be"], ["useful?"].
-asking(3) --> {draw(2,r)}, ["just"], ["tell"], ["me"], ["what"], b(r), ["to"], ["know."].
-
-a(1) --> ["do"], ["you"].
-a(2) --> ["does"], ["the"], ["human"].
-
-b(1) --> ["the"], ["human"], ["needs"].
-b(2) --> ["you"], ["need"].
-
 
 % proposeanswerquestion
 type("proposeanswerquestion") --> {draw(5,R)}, question(R).

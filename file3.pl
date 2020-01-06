@@ -90,7 +90,6 @@ flow([
 	    (["greetings"],"askhelp",39),
 	    (["askhelp"],"offerhelp",99),
 	    (["offerhelp"],"proposeanswerquestion",99),
-	    (["proposeanswerquestion","offerhelp"],"goodbye",99),
 	    (["greetings","greetings"],"askhelp",99),
 	    (_,_,1)
 	]).
