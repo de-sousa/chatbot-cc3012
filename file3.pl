@@ -1,8 +1,17 @@
+nats_inc(N,Xs):-
+    nats(N,Ys),
+    reverse(Ys,Xs).
+
 nats(0,[]).
 nats(N,[N|Xs]) :-
     not(compare(<,N,1)),
     X is N-1,
     nats(X,Xs).
+
+reverse([],[]).
+reverse([X|Xs],Ys):-
+    reverse(Xs,Zs),
+    append(Zs,[X],Ys).
 
 draw(N,R) :-
     nats(N,A), random_permutation(A,B),!, member(R,B).
@@ -112,17 +121,21 @@ write_fancy([X|Xs]):-
 chataway(L) :-
     chat(L,[],_). 
 
-chat(0,_,[A]) :- sentence_type(A,"goodbye"), write_f(A),!.
+chat(1,_,[A]) :- sentence_type(A,"goodbye"), write_f(A),!.
 chat(N,Ms,[A|As]) :- select(Ms,T),!, sentence_type(A,T), write_f(A), M is N-1, chat(M,[T|Ms],As).
 
 chataway_beta(L) :-
     chat_beta(L,[],_,[]).
 
-chat_beta(0,_) --> type("goodbye"),!.
+chat_beta(1,_) --> type("goodbye"),!.
 chat_beta(N,Ms) --> {M is N-1, select(Ms,T),!}, type(T), chat_beta(M,[T|Ms]).
 
-aim(To):-
-    chat(_,[],To).
+aim(To,N):-
+    length(To,N),
+    chat(N,[],To).
 
-chat_at_aim(From,To,_,_):-
-    aim(To).
+chat_at_aim(From,To,M,_):-
+    aim(To,N),
+    nats_inc(M,Ms),
+    member(A,Ms),
+    
