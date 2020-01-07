@@ -23,8 +23,22 @@ chataway(L) --> Gera conversas, plausíveis, de tamanho L, no máximo. A chamada
 Por exemplo:
 	chataway(5) gera a conversa: 
 	"
-	
-	"
+	?- chataway(5).
+	- Hello, friend! Hope you are having a good day!
+	- Might you, please, help me?
+	- Of course! In what does the human need help?
+	- What does the prefix predicate do?
+	- I don't have more time... Anyway, thank you!
+	true.
+
+	?- chataway(5).
+	- Hello, chatbot! Hope you are having a good day!
+	- Hi, chatbot! It feels like I don't see you for years!
+	- Could you, please, help me?
+	- Yes! Where can i be useful?	
+	- I'm in a hurry... I'm sorry
+	true.
+
 -------------------------------------------------------------------------------------------------------
 
 chat_at_aim(S1,S2,L,SearchProcedure) --> Este predicado gera uma conversa de tamanho L, no máximo, a começar na frase S1 e a terminar na frase S2, utilizando como método de pesquisa SearchProcedure.

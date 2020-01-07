@@ -70,6 +70,25 @@ list_ns(A,[(B,_,_)|Flow],Cs):-
     not(A=B),
     list_ns(A,Flow,Cs).
 
+
+search(_,_,0,_):- fail.
+search(From,To,_,[From]):-
+    flow(F),
+    member(([From],To,_),F).
+search(From,To,_,[From]):-
+    flow(F),
+    member(([From|_],To,_),F).
+search(From,To,L,[From|Fs]):-
+    flow(F),!,
+    member((From,A,_),F),
+    L1 is L-1,
+    search(A,To,L1,Fs).
+
+snt([],[]).
+snt([A|As],[B|Bs]):-
+    sentence_type(B,A),
+    snt(As,Bs),!.
+
 %-------------------------------------------------------------------------------------------------
 % Predicates of the Assignment
 
@@ -116,7 +135,7 @@ flow([
 % produz uma conversa de comprimento L
 chataway(L) :-
     chat(L,[],_,A,[]),!,
-    output(A).
+    output(A),!.
 
 chat(1,[T|_],[A]) -->    
     {not(T="thanks"),
@@ -144,3 +163,10 @@ chat_at_aim(From,To,L,_):-
     chat(L,Ns,_,A,To),!,
     output(From),
     output(A).
+
+chat_at_aim(From,To,L,_):-
+    sentence_type(From,A),
+    sentence_type(To,B),
+    search(A,B,L,[_|As]),
+    snt(As,Bs),
+    write_fss(Bs).
