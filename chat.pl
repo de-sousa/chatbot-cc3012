@@ -153,9 +153,17 @@ select(Ts,T) :-
     take(A,Ts,X),
     semtrans(X,T,_).
 
-chat_at_aim(From,To,L,_):-
+chat_at_aim(From,To,L,dfs):-
     sentence_type(From,A),
     sentence_type(To,B),
     search(A,B,L,[_|As]),
     snt(As,Bs),
     write_fss(Bs).
+
+chat_at_aim(From,To,L,bfs):-
+    sentence_type(From,A),
+    sentence_type(To,B),
+    bfs(B,[[A]],[_|As],L),
+    reverse(As,[_|Bs]),
+    snt(Bs,Cs),
+    write_fss(Cs).

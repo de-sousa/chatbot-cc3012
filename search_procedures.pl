@@ -1,12 +1,17 @@
-bfs(Goal,[[Goal|Path]|_],[Goal|Path]).
-bfs(Goal,[Path|Paths],Sol) :-
+bfs(Goal,[[Goal|Path]|_],[Goal|Path],_).
+bfs("goodbye",[["thanks"|Path]|_],["goodbye","thanks"|Path],_).
+bfs("rushedgoodbye",[[A]],["rushedgoodbye",A],_).
+bfs(Goal,[Path|Paths],Sol,L) :-
+    not(L=0),
     expand(Path,ExpPaths),
     append(Paths,ExpPaths,Paths2),
-    bfs(Goal,Paths2,Sol),!.
+    L1 is L-1,
+    bfs(Goal,Paths2,Sol,L1),!.
 
 expand([First|Path],ExpPaths) :-
+    flow(F),
     findall([Next,First|Path],
-	    (transition(First,Next),not(member(Next,[First|Path]))
+	    (member(([First|_],Next,_),F),not(member(Next,[First|Path]))
 	    ),
 	    ExpPaths).
 
