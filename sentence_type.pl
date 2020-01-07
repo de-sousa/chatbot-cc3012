@@ -97,14 +97,3 @@ e(2) --> ["I'm"],["in"],["a"],["hurry..."],["I'm"],["sorry"].
 e(3) --> ["I"], ["don't"], ["have"], ["more"], ["time..."], ["Anyway,"],["thank"],["you!"].
 e(4) --> ["Someone"],["is"],["calling"],["me..."],["It"],["was"],["a"],["pleasure"],["talking"],["to"],["you!"].
 
-
-% auxiliar predicates
-nats_down(0,[]).
-nats_down(N,[N|Xs]) :-
-    not(compare(<,N,1)),
-    X is N-1,
-    nats_down(X,Xs).
-
-draw(N,R) :-
-    nats_down(N,A), random_permutation(A,B),!, member(R,B).
-

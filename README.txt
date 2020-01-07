@@ -1,3 +1,5 @@
+AVISO: É necessário carregar todos os ficheiros presentes para funcionar!
+
 sentence_type(S,T) --> Classifica uma frase (dada por uma lista) num determinado tipo, de acordo com o conteúdo da frase. 
 Por exemplo: 
 	sentence_type(["Thanks","for","the","help!"],T), T unifica com "goodbye".
@@ -44,6 +46,26 @@ Por exemplo:
 chat_at_aim(S1,S2,L,SearchProcedure) --> Este predicado gera uma conversa de tamanho L, no máximo, a começar na frase S1 e a terminar na frase S2, utilizando como método de pesquisa SearchProcedure.
 
 Por exemplo: 
-	chat_at_aim(,,,) gera a conversa:
+	chat_at_aim/3 gera a conversa:
 	"
+	?- sentence_type(A,"greetings"), sentence_type(B,"goodbye"), chat_at_aim(A,B,10,dfs).
+	- Could you help me?
+	- Of course! In what do you need help?
+	- What does the append predicate do?
+	- append(L1,L2,L3) L3 is the result of the concatenation of L1 and L2.
+	- Thank you! I didn't use it for a long time, that I forgot.
+	A = ["Hello,", "chatbot!", "It", "feels", "like", "I", "don't", "see", "you"|...],
+	B = ["Thankful", "for", "helping", "you!"] .
 	"
+e:
+	"
+	?- sentence_type(A,"greetings"), sentence_type(B,"goodbye"), chat_at_aim(A,B,5,bfs).
+	- Can you help me?
+	- Of course! Just tell me what you need to know.
+	- What does the append predicate do?
+	- append(L1,L2,L3) L3 is the result of the concatenation of L1 and L2.
+	- Oh, thank you!
+	A = ["Hello,", "chatbot!", "It's", "nice", "too", "see", "you", "again!"],
+	B = ["I", "don't", "have", "more", "questions...", "Thank", "you!"] .
+	"
+Apenas estão definidos o dfs e o bfs.
