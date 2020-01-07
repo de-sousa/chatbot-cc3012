@@ -70,15 +70,14 @@ list_ns(A,[(B,_,_)|Flow],Cs):-
     not(A=B),
     list_ns(A,Flow,Cs).
 
-
-search(_,_,0,_):- fail.
-search(From,"goodbye",_,[From]).
+search("thanks","goodbye",_,["thanks"]).
 search(From,"rushedgoodbye",_,[From]).
 search(From,To,_,[From]):-
     flow(F),
     member(([From|_],To,_),F).
 search(From,To,L,[From|Fs]):-
     flow(F),!,
+    not(L=0),
     member(([From|_],A,_),F),
     L1 is L-1,
     search(A,To,L1,Fs).
