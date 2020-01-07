@@ -72,22 +72,21 @@ list_ns(A,[(B,_,_)|Flow],Cs):-
 
 
 search(_,_,0,_):- fail.
-search(From,To,_,[From]):-
-    flow(F),
-    member(([From],To,_),F).
+search(From,"goodbye",_,[From]).
+search(From,"rushedgoodbye",_,[From]).
 search(From,To,_,[From]):-
     flow(F),
     member(([From|_],To,_),F).
 search(From,To,L,[From|Fs]):-
     flow(F),!,
-    member((From,A,_),F),
+    member(([From|_],A,_),F),
     L1 is L-1,
     search(A,To,L1,Fs).
 
 snt([],[]).
 snt([A|As],[B|Bs]):-
     sentence_type(B,A),
-    snt(As,Bs),!.
+    snt(As,Bs).
 
 %-------------------------------------------------------------------------------------------------
 % Predicates of the Assignment
