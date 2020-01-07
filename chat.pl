@@ -156,15 +156,6 @@ select(Ts,T) :-
     semtrans(X,T,_).
 
 chat_at_aim(From,To,L,_):-
-    group(From,As),
-    length(As,N1),!,
-    chat(N1,[],Ms,From,[]),!,
-    reverse(Ms,Ns),
-    chat(L,Ns,_,A,To),!,
-    output(From),
-    output(A).
-
-chat_at_aim(From,To,L,_):-
     sentence_type(From,A),
     sentence_type(To,B),
     search(A,B,L,[_|As]),
