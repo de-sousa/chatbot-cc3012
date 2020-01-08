@@ -26,7 +26,7 @@ take(N,[X|Xs],[X|Ys]) :-
 
 % write(Xs)
 % write outputs a list of words
-write_fss([]).
+write_fss([]). 
 write_fss([X|Xs]):-
     write_fs(X),
     write_fss(Xs).
@@ -135,6 +135,8 @@ chataway(L) :-
     chat(L,[],_,A,[]),!,
     output(A),!.
 
+chat(1,[],["goodbye"]) -->
+    type("goodbye").
 chat(1,[T|_],[A]) -->    
     {not(T="thanks"),
      member(A,["rushedgoodbye",_])},
